@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# ghclone - Auto-rotating GitHub clone for China
+# Usage: ghclone <https://github.com/owner/repo.git> [clone options...] [target-dir]
+# Probes each mirror prefix, retries 3x per prefix, exits on first success.
+set -u
+url="${1:?用法: ghclone <https://github.com/owner/repo.git> [git clone 选项...] [目标目录]}"
+shift
+rest="${url#https://github.com/}"
+
+# 加速前缀列表（按顺序尝试）。国内可用前缀时有时无，可在此增删。
+PATS=("https://gh-proxy.com" "https://ghfast.top" "https://ghproxy.net")
+RETRIES=3
+
+echo "[ghclone] 目标: https://github.com/$rest" >&2
+for p in "${PATS[@]}"; do
+  for ((i=1; i<=RETRIES; i++)); do
+    echo "[ghclone] 尝试 $p ($i/$RETRIES)" >&2
+    if git ls-remote "$p/https://github.com/$rest" HEAD >/dev/null 2>&1; then
+      if git clone "$p/https://github.com/$rest" "$@"; then
+        echo "[ghclone] 成功：用了 $p" >&2
+        exit 0
+      fi
+    fi
+    sleep 2
+  done
+  echo "[ghclone] $p 连续 $RETRIES 次失败，换下一个" >&2
+done
+echo "[ghclone] 所有前缀均失败，可用 --mirror 指定单个前缀重试" >&2
+exit 1

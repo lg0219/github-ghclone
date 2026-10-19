@@ -1,0 +1,18 @@
+{
+  "name": "github-ghclone",
+  "version": "1.0.0",
+  "description": "Auto-rotating GitHub acceleration for China: ghclone script + git insteadOf + alias, with per-prefix retry",
+  "bin": { "ghclone": "bin/ghclone" },
+  "scripts": {
+    "install": "bash scripts/install.sh",
+    "selftest": "for p in https://gh-proxy.com https://ghfast.top https://ghproxy.net; do echo \"$p -> $(git ls-remote \"$p/https://github.com/octocat/Hello-World.git\" HEAD 2>/dev/null | head -1 || echo down)\"; done"
+  },
+  "keywords": [
+    "github", "china", "accelerate", "proxy", "mirror", "clone", "gh-proxy", "git", "network", "openclaw", "skill", "agent"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lg0219/github-ghclone"
+  }
+}

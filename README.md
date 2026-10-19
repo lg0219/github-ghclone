@@ -49,6 +49,14 @@ for p in https://gh-proxy.com https://ghfast.top https://ghproxy.net; do
 done
 ```
 
+## 作为 OpenClaw / Agent 技能的默认行为
+
+把本仓库放进 agent 的技能目录后，agent 遇到国内拉 GitHub（`git clone`/`gh`/下载 release 等）卡顿、掉线、`Recv failure: 连接被对方重置`、直连 0 字节时，会按 `SKILL.md` 自动：
+
+1. **默认优先用 `ghclone` / `git gclone`** 拉取（自动轮换前缀 + 每前缀重试，挂死不卡死），而不是依赖单一静态前缀 `gh-proxy.com`。
+2. 前缀失效时，先跑探测命令确认哪些还活着，再更新 `~/bin/ghclone` 的 `PATS=(...)` 与 git 全局 `url.insteadOf` 前缀。
+3. 这些规则建议同时写进 agent 的工作区规则文件（如 OpenClaw 的 `AGENTS.md`），**重启网关/服务器后依旧生效**。
+
 ## 某前缀挂死时怎么换
 
 ```bash
